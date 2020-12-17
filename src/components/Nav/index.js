@@ -1,37 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { capitalizeFirstLetter } from "../../utils/helpers";
 
-const Nav = () => {
-  // categories for Nav bar
-  const categories = [
-    {
-      name: "commercial",
-      description:
-        "Photos of grocery stores, food trucks, and other commercial projects",
-    },
-    {
-      name: "portraits",
-      description: "Portraits of people in my life",
-    },
-    {
-      name: "food",
-      description: "Delicious delicacies",
-    },
-    {
-      name: "landscape",
-      description: "Fields, farmhouses, waterfalls, and the beauty of nature",
-    },
-  ];
+function Nav(props) {
+  const { categories = [], setCurrentCategory, currentCategory } = props;
 
-  // Event Listeners
-  function categorySelected(name) {
-    console.log(`${name} clicked`);
-  }
+  // update tab name (document.title) to currentCategory.name
+  useEffect(() => {
+    document.title = capitalizeFirstLetter(currentCategory.name);
+  }, [currentCategory]);
+
+  const handleClick = (item) => {
+    console.log(item);
+    return item;
+  };
 
   return (
-    <header>
+    <header className="flex-row px-1">
       <h2>
         <a data-testid="link" href="/">
           <span role="img" aria-label="camera">
+            {" "}
             📸
           </span>{" "}
           Oh Snap!
@@ -40,19 +28,37 @@ const Nav = () => {
       <nav>
         <ul className="flex-row">
           <li className="mx-2">
-            <a data-testid="about" href="#about">
-              About Me
+            <a
+              data-testid="about"
+              href="#about"
+              onClick={() => handleClick("About")}
+            >
+              About me
             </a>
           </li>
-          <li className="mx-2">
-            <span>Contact</span>
+          <li className={"mx-2"}>
+            <span onClick={() => handleClick("Contact")}>Contact</span>
           </li>
-          {/* iterates through categories array with map */}
+          {/* 
+          uses map on categories array to display each item in nav bar
+          adds class of mx-1 and makes sure the currentCategory.name matches the mapped category.name
+          adds class of navActive to highlight
+          adds a key to list item for react to track !! Should be unique !!
+          adds event listener to setCurrentCategory to the clicked category
+          */}
           {categories.map((category) => (
-            <li className="mx-1" key={category.name}>
-              {/* Even listener for on click. Will run function on category.name */}
-              <span onClick={() => categorySelected(category.name)}>
-                {category.name}
+            <li
+              className={`mx-1 ${
+                currentCategory.name === category.name && "navActive"
+              }`}
+              key={category.name}
+            >
+              <span
+                onClick={() => {
+                  setCurrentCategory(category);
+                }}
+              >
+                {capitalizeFirstLetter(category.name)}
               </span>
             </li>
           ))}
@@ -60,6 +66,6 @@ const Nav = () => {
       </nav>
     </header>
   );
-};
+}
 
 export default Nav;
